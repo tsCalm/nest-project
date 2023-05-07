@@ -18,7 +18,7 @@ class TypeOrmConfig {
       password: configService.get('DB_PASSWORD'),
       database: configService.get('DB_NAME'),
       entities: [join(__dirname, '../**/*.entity.js')],
-      synchronize: false,
+      synchronize: true,
       logging: false,
       autoLoadEntities: false,
     };

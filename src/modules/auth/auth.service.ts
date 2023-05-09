@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { HashService } from '../common/hash-password.service';
 import { UserRepository } from '../user/repository/user.repo';
-import { CreateUser } from './dto/create-user.dto';
+import { CreateUser } from '../user/dto/create-user.dto';
+import { ICreateUserParam } from '../user/types/create-user.type';
 
 @Injectable()
 export class AuthService {
@@ -12,9 +13,9 @@ export class AuthService {
     private readonly _userRepository: UserRepository,
   ) {}
 
-  async signUp(createUser: CreateUser) {
+  async signUp(createUserParams: ICreateUserParam) {
     try {
-      const { email, tel, password } = createUser;
+      const { email, tel, password } = createUserParams;
 
       const isExistEmail = await this._userRepository.isExistUser(
         'email',
@@ -26,8 +27,8 @@ export class AuthService {
       if (isExistTel) throw new Error('이미 존재하는 전화번호입니다.');
 
       const hashPassword = await this._hashService.hashPassword(password);
-      createUser.password = hashPassword;
-      return createUser;
+      createUserParams.password = hashPassword;
+      return createUserParams;
     } catch (err) {
       console.log(err);
       return err;

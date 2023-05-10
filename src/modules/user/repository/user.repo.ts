@@ -5,26 +5,34 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { User } from '../user.entity';
 
-@Injectable()
+// @Injectable()
 export class UserRepository {
   constructor(
     @InjectRepository(User)
-    private readonly _userRepo: Repository<User>,
+    protected readonly _userRepo: Repository<User>,
   ) {}
 
-  async isExistUser(key: keyof User, value: string) {
-    return await this._userRepo.exist({
-      where: {
-        [key]: value,
-      },
-    });
+  getInstance(params: Partial<User>) {
+    return this._userRepo.create(params);
   }
 
-  async findByEmail(email: string): Promise<Partial<User>> {
-    return {};
-  }
+  // getInstance(params: Partial<User>) {
+  //   return this._userRepo.create(params);
+  // }
 
-  async findByTel(tel: string): Promise<Partial<User>> {
-    return {};
-  }
+  // async isExistUser(key: keyof User, value: string) {
+  //   return await this._userRepo.exist({
+  //     where: {
+  //       [key]: value,
+  //     },
+  //   });
+  // }
+
+  // async findByEmail(email: string): Promise<Partial<User>> {
+  //   return {};
+  // }
+
+  // async findByTel(tel: string): Promise<Partial<User>> {
+  //   return {};
+  // }
 }

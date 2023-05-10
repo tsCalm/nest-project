@@ -11,15 +11,17 @@ import {
   USER_CREATE_REPOSITORY_TOKEN,
   USER_EXIST_REPOSITORY_TOKEN,
 } from '../user/token';
+import { IUserCreateRepository } from '../user/types/repository/user-create';
+import { IUserExistRepository } from '../user/types/repository/user-exist';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly _hashService: HashService,
     @Inject(USER_EXIST_REPOSITORY_TOKEN)
-    private readonly _userExistRepository: UserExistRepository,
+    private readonly _userExistRepository: IUserExistRepository,
     @Inject(USER_CREATE_REPOSITORY_TOKEN)
-    private readonly _userCreateRepository: UserCreateRepository,
+    private readonly _userCreateRepository: IUserCreateRepository,
   ) {}
 
   async signUp(createUserParams: ICreateUserParam) {

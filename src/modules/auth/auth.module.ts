@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HashService } from '../common/hash-password.service';
-import { UserCreateRepository } from '../user/repository/user-create';
+import { HashService } from '../common/hash/hash-password.service';
+import { HASH_PASSWORD_TOKEN } from '../common/hash/hash.token';
 import { UserExistRepository } from '../user/repository/user-exist';
-import { UserRepository } from '../user/repository/user-repo';
 import {
   USER_CREATE_REPOSITORY_TOKEN,
   USER_EXIST_REPOSITORY_TOKEN,
@@ -17,7 +16,10 @@ import { AuthService } from './auth.service';
   controllers: [AuthController],
   providers: [
     AuthService,
-    HashService,
+    {
+      provide: HASH_PASSWORD_TOKEN,
+      useClass: HashService,
+    },
     {
       provide: USER_EXIST_REPOSITORY_TOKEN,
       useClass: UserExistRepository,

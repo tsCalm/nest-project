@@ -1,23 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { HashService } from '../common/hash-password.service';
-import { UserRepository } from '../user/repository/user-repo';
-import { CreateUser } from '../user/dto/create-user.dto';
-import { ICreateUserParam } from '../user/types/dto/create-user.type';
-import { UserExistRepository } from '../user/repository/user-exist';
-import { UserCreateRepository } from '../user/repository/user-create';
+import { HashService } from '../common/hash/hash-password.service';
+import { HASH_PASSWORD_TOKEN } from '../common/hash/hash.token';
 import {
   USER_CREATE_REPOSITORY_TOKEN,
   USER_EXIST_REPOSITORY_TOKEN,
 } from '../user/token';
-import { IUserCreateRepository } from '../user/types/repository/user-create';
-import { IUserExistRepository } from '../user/types/repository/user-exist';
+import { ICreateUserParam } from '../user/types/dto/create-user.type';
+import { IUserCreateRepository } from '../user/types/repository/user-create.interface';
+import { IUserExistRepository } from '../user/types/repository/user-exist.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly _hashService: HashService,
+    @Inject(HASH_PASSWORD_TOKEN) private readonly _hashService: HashService,
     @Inject(USER_EXIST_REPOSITORY_TOKEN)
     private readonly _userExistRepository: IUserExistRepository,
     @Inject(USER_CREATE_REPOSITORY_TOKEN)

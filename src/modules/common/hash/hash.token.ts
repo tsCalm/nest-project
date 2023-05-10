@@ -1,0 +1,1 @@
+export const HASH_PASSWORD_TOKEN = 'HASH_PASSWORD_TOKEN' as const;

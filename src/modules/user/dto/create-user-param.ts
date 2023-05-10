@@ -1,4 +1,4 @@
-import { ICreateUserParam } from '../types/create-user.type';
+import { ICreateUserParam } from '../types/dto/create-user.type';
 import { CreateUser } from './create-user.dto';
 
 export class CreateUserParam implements ICreateUserParam {

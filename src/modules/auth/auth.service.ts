@@ -1,18 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { HashService } from '../common/hash-password.service';
-import { UserRepository } from '../user/repository/user.repo';
+import { UserRepository } from '../user/repository/user-repo';
 import { CreateUser } from '../user/dto/create-user.dto';
-import { ICreateUserParam } from '../user/types/create-user.type';
-import { UserExistRepository } from '../user/repository/user.exist';
-import { UserCreateRepository } from '../user/repository/user.create';
+import { ICreateUserParam } from '../user/types/dto/create-user.type';
+import { UserExistRepository } from '../user/repository/user-exist';
+import { UserCreateRepository } from '../user/repository/user-create';
+import {
+  USER_CREATE_REPOSITORY_TOKEN,
+  USER_EXIST_REPOSITORY_TOKEN,
+} from '../user/token';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly _hashService: HashService,
+    @Inject(USER_EXIST_REPOSITORY_TOKEN)
     private readonly _userExistRepository: UserExistRepository,
+    @Inject(USER_CREATE_REPOSITORY_TOKEN)
     private readonly _userCreateRepository: UserCreateRepository,
   ) {}
 

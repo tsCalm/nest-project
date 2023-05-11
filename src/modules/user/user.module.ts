@@ -20,7 +20,7 @@ import { User } from './user.entity';
     },
     {
       provide: USER_CREATE_REPOSITORY_TOKEN,
-      useClass: UserExistRepository,
+      useClass: UserCreateRepository,
     },
   ],
   exports: [
@@ -30,7 +30,7 @@ import { User } from './user.entity';
     },
     {
       provide: USER_CREATE_REPOSITORY_TOKEN,
-      useClass: UserExistRepository,
+      useClass: UserCreateRepository,
     },
   ],
 })

@@ -13,7 +13,7 @@ export class UserExistRepository
   // }
 
   async isExistUser(key: keyof User, value: string) {
-    return await this._userRepo.exist({
+    return this._userRepo.exist({
       where: {
         [key]: value,
       },

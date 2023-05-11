@@ -1,0 +1,1 @@
+export const AUTH_SIGNUP_SERVICE_TOKEN = 'AUTH_SIGNUP_SERVICE_TOKEN' as const;

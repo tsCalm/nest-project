@@ -1,5 +1,5 @@
 import { ICreateUserParam } from '../types/dto/create-user.type';
-import { CreateUser } from './create-user.dto';
+import { CreateUserDto } from './create-user.dto';
 
 export class CreateUserParam implements ICreateUserParam {
   email: string;
@@ -8,7 +8,7 @@ export class CreateUserParam implements ICreateUserParam {
   name: string;
   birth: string;
   tel: string;
-  constructor(createUser: CreateUser) {
+  constructor(createUser: CreateUserDto) {
     const { address_main = '', address_sub = '' } = createUser;
     this.email = createUser.email;
     this.password = createUser.password;

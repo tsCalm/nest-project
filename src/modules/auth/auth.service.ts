@@ -9,17 +9,17 @@ import { ICreateUserParam } from '../user/types/dto/create-user.type';
 import { IUserCreateRepository } from '../user/types/repository/user-create.interface';
 import { IUserExistRepository } from '../user/types/repository/user-exist.interface';
 import { SignUpService } from './service/sign-up.service';
-import { AUTH_SIGNUP_SERVICE_TOKEN } from './token';
+import { AUTH_LOGIN_SERVICE_TOKEN, AUTH_SIGNUP_SERVICE_TOKEN } from './token';
 import { ILoginParam } from './types/dto';
-import { ISignUpService } from './types/service';
+import { ILoginService, ISignUpService } from './types/service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(AUTH_SIGNUP_SERVICE_TOKEN)
     private readonly _signUpService: ISignUpService,
-    @Inject(USER_EXIST_REPOSITORY_TOKEN)
-    private readonly _userExistRepository: IUserExistRepository,
+    @Inject(AUTH_LOGIN_SERVICE_TOKEN)
+    private readonly _loginService: ILoginService,
     @Inject(USER_CREATE_REPOSITORY_TOKEN)
     private readonly _userCreateRepository: IUserCreateRepository,
   ) {}
@@ -39,6 +39,15 @@ export class AuthService {
   }
 
   async login(loginParam: ILoginParam) {
-    return loginParam;
+    try {
+      const { email, password } = loginParam;
+      const user = await this._loginService.findByEmailAndFail(email);
+      const { password: hashPassword } = user;
+      this._loginService.validatePassword(password, hashPassword);
+      return user;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   }
 }

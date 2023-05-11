@@ -15,6 +15,6 @@ export class HashService implements IHashService {
   }
 
   async comparePassword(password: string, hashPassword: string) {
-    await bcrypt.compare(password, hashPassword);
+    return bcrypt.compare(password, hashPassword);
   }
 }

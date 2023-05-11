@@ -12,7 +12,9 @@ import { SignUpService } from './service/sign-up.service';
 import { AUTH_LOGIN_SERVICE_TOKEN, AUTH_SIGNUP_SERVICE_TOKEN } from './token';
 import { ILoginParam } from './types/dto';
 import { ILoginService, ISignUpService } from './types/service';
-
+import { JwtService } from '@nestjs/jwt';
+import { GENERATE_JWT_TYPE } from './enum';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,8 +24,26 @@ export class AuthService {
     private readonly _loginService: ILoginService,
     @Inject(USER_CREATE_REPOSITORY_TOKEN)
     private readonly _userCreateRepository: IUserCreateRepository,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
+  private async generateToken(
+    id: number,
+    email: string,
+    jwt_type: GENERATE_JWT_TYPE,
+  ) {
+    const tokenSecret = await this.configService.get(
+      `JWT_${jwt_type}_TOKEN_SECRET`,
+    );
 
+    const tokenExpiresIn = this.configService.get(
+      `JWT_${jwt_type}_TOKEN_EXPIRES_IN`,
+    );
+    return await this.jwtService.signAsync(
+      { sub: id, email },
+      { secret: tokenSecret, expiresIn: tokenExpiresIn },
+    );
+  }
   async signUp(createUserParams: ICreateUserParam) {
     try {
       const { email, tel } = createUserParams;
@@ -42,9 +62,19 @@ export class AuthService {
     try {
       const { email, password } = loginParam;
       const user = await this._loginService.findByEmailAndFail(email);
-      const { password: hashPassword } = user;
+      const { id, password: hashPassword } = user;
       this._loginService.validatePassword(password, hashPassword);
-      return user;
+      const accessToken = await this.generateToken(
+        id,
+        email,
+        GENERATE_JWT_TYPE.ACCESS,
+      );
+      const refreshToken = await this.generateToken(
+        id,
+        email,
+        GENERATE_JWT_TYPE.REFRESH,
+      );
+      return { accessToken, refreshToken };
     } catch (err) {
       console.log(err);
       return err;

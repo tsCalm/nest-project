@@ -16,9 +16,10 @@ import { SignUpService } from './service/sign-up.service';
 import { UserCreateRepository } from '../user/repository/user-create';
 import { UserFindRepository } from '../user/repository/user-find';
 import { LoginService } from './service/login.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [JwtModule.register({}), TypeOrmModule.forFeature([User])],
   controllers: [AuthController],
   providers: [
     AuthService,

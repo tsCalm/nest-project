@@ -23,12 +23,16 @@ import { LoginService } from './service/login.service';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtToken } from './jwt-token.entity';
 import { JwtTokenRepository } from './repository/jwt-token';
+import { LocalStrategy } from './strategy/local.strategy';
+import { AccessTokenStrategy } from './strategy/access-token.strategy';
 
 @Module({
   imports: [JwtModule.register({}), TypeOrmModule.forFeature([User, JwtToken])],
   controllers: [AuthController],
   providers: [
     AuthService,
+    AccessTokenStrategy,
+    LocalStrategy,
     {
       provide: HASH_PASSWORD_SERVICE_TOKEN,
       useClass: HashService,

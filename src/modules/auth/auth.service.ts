@@ -9,12 +9,17 @@ import { ICreateUserParam } from '../user/types/dto/create-user.type';
 import { IUserCreateRepository } from '../user/types/repository/user-create.interface';
 import { IUserExistRepository } from '../user/types/repository/user-exist.interface';
 import { SignUpService } from './service/sign-up.service';
-import { AUTH_LOGIN_SERVICE_TOKEN, AUTH_SIGNUP_SERVICE_TOKEN } from './token';
+import {
+  AUTH_LOGIN_SERVICE_TOKEN,
+  AUTH_SIGNUP_SERVICE_TOKEN,
+  JWT_TOKEN_REPOSITORY_TOKEN,
+} from './token';
 import { ILoginParam } from './types/dto';
 import { ILoginService, ISignUpService } from './types/service';
 import { JwtService } from '@nestjs/jwt';
 import { GENERATE_JWT_TYPE } from './enum';
 import { ConfigService } from '@nestjs/config';
+import { ITokenRepository } from './types/repository';
 @Injectable()
 export class AuthService {
   constructor(
@@ -24,6 +29,8 @@ export class AuthService {
     private readonly _loginService: ILoginService,
     @Inject(USER_CREATE_REPOSITORY_TOKEN)
     private readonly _userCreateRepository: IUserCreateRepository,
+    @Inject(JWT_TOKEN_REPOSITORY_TOKEN)
+    private readonly _jwtTokenRepository: ITokenRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -44,6 +51,7 @@ export class AuthService {
       { secret: tokenSecret, expiresIn: tokenExpiresIn },
     );
   }
+
   async signUp(createUserParams: ICreateUserParam) {
     try {
       const { email, tel } = createUserParams;
@@ -64,14 +72,24 @@ export class AuthService {
       const user = await this._loginService.findByEmailAndFail(email);
       const { id, password: hashPassword } = user;
       this._loginService.validatePassword(password, hashPassword);
-      const accessToken = await this.generateToken(
+      const accessTokenPending = this.generateToken(
         id,
         email,
         GENERATE_JWT_TYPE.ACCESS,
       );
-      const refreshToken = await this.generateToken(
+      const refreshTokenPending = this.generateToken(
         id,
         email,
+        GENERATE_JWT_TYPE.REFRESH,
+      );
+      const [accessToken, refreshToken] = await Promise.all([
+        accessTokenPending,
+        refreshTokenPending,
+      ]);
+
+      this._jwtTokenRepository.save(
+        id,
+        refreshToken,
         GENERATE_JWT_TYPE.REFRESH,
       );
       return { accessToken, refreshToken };

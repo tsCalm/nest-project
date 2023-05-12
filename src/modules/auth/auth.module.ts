@@ -25,6 +25,7 @@ import { JwtToken } from './jwt-token.entity';
 import { JwtTokenRepository } from './repository/jwt-token';
 import { LocalStrategy } from './strategy/local.strategy';
 import { AccessTokenStrategy } from './strategy/access-token.strategy';
+import { RefreshTokenStrategy } from './strategy/refresh-token.strategy';
 
 @Module({
   imports: [JwtModule.register({}), TypeOrmModule.forFeature([User, JwtToken])],
@@ -32,6 +33,7 @@ import { AccessTokenStrategy } from './strategy/access-token.strategy';
   providers: [
     AuthService,
     AccessTokenStrategy,
+    RefreshTokenStrategy,
     LocalStrategy,
     {
       provide: HASH_PASSWORD_SERVICE_TOKEN,

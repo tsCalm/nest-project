@@ -11,9 +11,9 @@ import { User } from 'src/modules/user/user.entity';
 // import { UsersService } from 'src/users/users.service';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(
+export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
-  'access-jwt',
+  'refresh-jwt',
 ) {
   constructor(
     @Inject(USER_FIND_REPOSITORY_TOKEN)
@@ -24,14 +24,14 @@ export class AccessTokenStrategy extends PassportStrategy(
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       passReqToCallback: true,
-      secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      secretOrKey: configService.get('JWT_REFRESH_TOKEN_SECRET'),
     });
   }
 
   async validate(req: Request, payload: any): Promise<User> {
     const { id } = payload;
     return this._userFindRepository.findOne({
-      select: ['id', 'email', 'name', 'address', 'birth', 'tel'],
+      select: ['id', 'email'],
       where: {
         id,
       },

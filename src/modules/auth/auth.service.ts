@@ -34,11 +34,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
-  private async generateToken(
-    id: number,
-    email: string,
-    jwt_type: GENERATE_JWT_TYPE,
-  ) {
+  async generateToken(id: number, email: string, jwt_type: GENERATE_JWT_TYPE) {
     const tokenSecret = await this.configService.get(
       `JWT_${jwt_type}_TOKEN_SECRET`,
     );

@@ -5,7 +5,9 @@ import { CreateUserParam } from '../user/dto/create-user-param';
 import { LoginDto } from './dto/login.dto';
 import { User } from '../user/user.entity';
 import { CurrentUser } from './decorator/user';
-import { JwtAuthGuard } from './guard/jwt-guard';
+import { AccessTokenGuard } from './guard/access-token.guard';
+import { RefreshTokenGuard } from './guard/refresh-token.guard';
+import { GENERATE_JWT_TYPE } from './enum';
 
 @Controller('auth')
 export class AuthController {
@@ -21,8 +23,20 @@ export class AuthController {
   }
 
   @Get('me')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   async whoAmI(@CurrentUser() user: User) {
     return user;
+  }
+
+  @Get('refresh')
+  @UseGuards(RefreshTokenGuard)
+  async generateAccessToken(@CurrentUser() user: User) {
+    const { id, email } = user;
+    const accessToken = await this.authService.generateToken(
+      id,
+      email,
+      GENERATE_JWT_TYPE.ACCESS,
+    );
+    return { accessToken };
   }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { CreateUserParam } from '../user/dto/create-user-param';
@@ -8,6 +16,10 @@ import { CurrentUser } from './decorator/user';
 import { AccessTokenGuard } from './guard/access-token.guard';
 import { RefreshTokenGuard } from './guard/refresh-token.guard';
 import { GENERATE_JWT_TYPE } from './enum';
+import { get } from 'http';
+import { NaverStrategy } from './strategy/naver.strategy';
+import { NaverAuthGuard } from './guard/naver-guard';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -38,5 +50,17 @@ export class AuthController {
       GENERATE_JWT_TYPE.ACCESS,
     );
     return { accessToken };
+  }
+
+  @Get('naver')
+  @UseGuards(NaverAuthGuard)
+  async naverLogin() {}
+
+  @Get('naver/callback')
+  @UseGuards(NaverAuthGuard)
+  async naverCallBack(@Req() req, @Res() res: Response) {
+    const user = req.user;
+    const tokens = await this.authService.socialLogin(user);
+    return res.send(tokens);
   }
 }

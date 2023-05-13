@@ -9,6 +9,6 @@ export class UserCreateRepository
   implements IUserCreateRepository
 {
   async save(params: User): Promise<User> {
-    return await this._userRepo.save(params);
+    return this._userRepo.save(params);
   }
 }

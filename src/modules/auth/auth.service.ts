@@ -94,4 +94,35 @@ export class AuthService {
       return err;
     }
   }
+  async socialLogin(loginParam: ILoginParam) {
+    try {
+      const { email } = loginParam;
+      const user = await this._loginService.findByEmailAndFail(email);
+      const { id } = user;
+      const accessTokenPending = this.generateToken(
+        id,
+        email,
+        GENERATE_JWT_TYPE.ACCESS,
+      );
+      const refreshTokenPending = this.generateToken(
+        id,
+        email,
+        GENERATE_JWT_TYPE.REFRESH,
+      );
+      const [accessToken, refreshToken] = await Promise.all([
+        accessTokenPending,
+        refreshTokenPending,
+      ]);
+
+      this._jwtTokenRepository.save(
+        id,
+        refreshToken,
+        GENERATE_JWT_TYPE.REFRESH,
+      );
+      return { accessToken, refreshToken };
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
 }

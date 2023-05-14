@@ -19,7 +19,7 @@ import { GENERATE_JWT_TYPE } from './enum';
 import { get } from 'http';
 import { NaverStrategy } from './strategy/naver.strategy';
 import { NaverAuthGuard } from './guard/naver-guard';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -59,8 +59,8 @@ export class AuthController {
   @Get('naver/callback')
   @UseGuards(NaverAuthGuard)
   async naverCallBack(@Req() req, @Res() res: Response) {
-    const user = req.user;
-    const tokens = await this.authService.socialLogin(user);
+    const user = req?.user;
+    const tokens = await this.authService.login(user, true);
     return res.send(tokens);
   }
 }

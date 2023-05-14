@@ -62,43 +62,14 @@ export class AuthService {
     }
   }
 
-  async login(loginParam: ILoginParam) {
+  async login(loginParam: ILoginParam, isSocial: boolean = false) {
     try {
       const { email, password } = loginParam;
       const user = await this._loginService.findByEmailAndFail(email);
       const { id, password: hashPassword } = user;
-      this._loginService.validatePassword(password, hashPassword);
-      const accessTokenPending = this.generateToken(
-        id,
-        email,
-        GENERATE_JWT_TYPE.ACCESS,
-      );
-      const refreshTokenPending = this.generateToken(
-        id,
-        email,
-        GENERATE_JWT_TYPE.REFRESH,
-      );
-      const [accessToken, refreshToken] = await Promise.all([
-        accessTokenPending,
-        refreshTokenPending,
-      ]);
-
-      this._jwtTokenRepository.save(
-        id,
-        refreshToken,
-        GENERATE_JWT_TYPE.REFRESH,
-      );
-      return { accessToken, refreshToken };
-    } catch (err) {
-      console.log(err);
-      return err;
-    }
-  }
-  async socialLogin(loginParam: ILoginParam) {
-    try {
-      const { email } = loginParam;
-      const user = await this._loginService.findByEmailAndFail(email);
-      const { id } = user;
+      if (!isSocial) {
+        this._loginService.validatePassword(password, hashPassword);
+      }
       const accessTokenPending = this.generateToken(
         id,
         email,

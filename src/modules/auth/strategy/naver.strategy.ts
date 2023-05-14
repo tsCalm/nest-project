@@ -24,7 +24,6 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     @Inject(USER_CREATE_REPOSITORY_TOKEN)
     private readonly _userCreateRepository: IUserCreateRepository,
     private readonly configService: ConfigService,
-    private readonly _authService: AuthService,
   ) {
     super({
       clientID: configService.get('NAVER_CLIENT_ID'),
@@ -58,7 +57,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     });
     if (!user) {
       const tel = mobile.replaceAll('-', '');
-      // 회원가입
+      // 회원가입, 필수항목을 정해도 네이버 로그인은 유저의 정보를 유저가 선택해서 보낼 수 있기 때문에 최소한의 정보로 유저 생성
       const newUserParam = this._userCreateRepository.getInstance({
         email,
         name,

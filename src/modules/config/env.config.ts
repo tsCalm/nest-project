@@ -4,5 +4,5 @@ export default ConfigModule.forRoot({
   isGlobal: true,
   cache: true,
   expandVariables: true,
-  envFilePath: '.env.dev',
+  envFilePath: '.env.stag',
 });

@@ -63,11 +63,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
       });
       return await this._userCreateRepository.save(newUserParam);
     }
-    if (user.login_type !== LOGIN_TYPE.NAVER) {
-      req.socialError = new BadRequestException(
-        `${user.login_type} 로그인으로 다시 시도해주세요.`,
-      );
-    }
+
     return user;
   }
 }

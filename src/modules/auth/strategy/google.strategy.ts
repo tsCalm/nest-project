@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { Strategy } from 'passport-kakao-oauth2';
+import { Strategy, Profile } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { LOGIN_TYPE } from 'src/modules/user/enum';
@@ -14,7 +14,7 @@ import { IKakaoProfile } from '../types/dto';
 import { User } from 'src/modules/user/user.entity';
 
 @Injectable()
-export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
+export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
     @Inject(USER_FIND_REPOSITORY_TOKEN)
     private readonly _userFindRepository: IUserFindRepository,
@@ -23,26 +23,21 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     private readonly configService: ConfigService,
   ) {
     super({
-      clientID: configService.get('KAKAO_CLIENT_ID'),
-      clientSecret: configService.get('KAKAO_CLIENT_SECRET_ID'),
-      callbackURL: configService.get('KAKAO_CALLBACK_URL'),
-      passReqToCallback: true,
+      clientID: configService.get('GOOGLE_CLIENT_ID'),
+      clientSecret: configService.get('GOOGLE_CLIENT_SECRET_ID'),
+      callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
+      scope: ['email', 'profile'],
     });
   }
 
   async validate(
-    req: Request & { socialError?: Error; user?: User },
     accessToken: string,
     refreshToken: string,
-    profile: IKakaoProfile,
+    profile: Profile,
+    done: Function,
   ) {
-    const { res } = req;
-
     const {
-      _json: {
-        properties: { nickname: name },
-        kakao_account: { email },
-      },
+      _json: { name, email },
     } = profile;
 
     if (email === undefined) {
@@ -65,7 +60,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
       const newUserParam = this._userCreateRepository.getInstance({
         email,
         name,
-        login_type: LOGIN_TYPE.KAKAO,
+        login_type: LOGIN_TYPE.GOOGLE,
       });
       return await this._userCreateRepository.save(newUserParam);
     }

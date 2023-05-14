@@ -28,6 +28,7 @@ import { AccessTokenStrategy } from './strategy/access-token.strategy';
 import { RefreshTokenStrategy } from './strategy/refresh-token.strategy';
 import { NaverStrategy } from './strategy/naver.strategy';
 import { KakaoStrategy } from './strategy/kakao.strategy';
+import { GoogleStrategy } from './strategy/google.strategy';
 
 @Module({
   imports: [JwtModule.register({}), TypeOrmModule.forFeature([User, JwtToken])],
@@ -39,6 +40,7 @@ import { KakaoStrategy } from './strategy/kakao.strategy';
     LocalStrategy,
     NaverStrategy,
     KakaoStrategy,
+    GoogleStrategy,
     {
       provide: HASH_PASSWORD_SERVICE_TOKEN,
       useClass: HashService,

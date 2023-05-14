@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { HashService } from '../common/hash/hash.service';
 import { HASH_PASSWORD_SERVICE_TOKEN } from '../common/hash/hash.token';
 import {
@@ -20,6 +20,8 @@ import { JwtService } from '@nestjs/jwt';
 import { GENERATE_JWT_TYPE } from './enum';
 import { ConfigService } from '@nestjs/config';
 import { ITokenRepository } from './types/repository';
+import { User } from '../user/user.entity';
+import { LOGIN_TYPE } from '../user/enum';
 @Injectable()
 export class AuthService {
   constructor(
@@ -34,6 +36,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
+  checkLoginType(user: User, type: LOGIN_TYPE) {
+    if (user.login_type !== type)
+      throw new BadRequestException(
+        `${user.login_type} 로그인으로 다시 시도해주세요.`,
+      );
+  }
   async generateToken(id: number, email: string, jwt_type: GENERATE_JWT_TYPE) {
     const tokenSecret = await this.configService.get(
       `JWT_${jwt_type}_TOKEN_SECRET`,

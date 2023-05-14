@@ -59,8 +59,12 @@ export class AuthController {
 
   @Get('naver/callback')
   @UseGuards(NaverAuthGuard)
-  async naverCallBack(@Req() req, @Res() res: Response) {
-    const user = req?.user;
+  async naverCallBack(
+    @Req() req: Request & { socialError?: Error; user?: User },
+    @Res() res: Response,
+  ) {
+    const { user, socialError } = req;
+    if (socialError) res.send(socialError);
     const tokens = await this.authService.login(user, true);
     return res.send(tokens);
   }
@@ -71,8 +75,12 @@ export class AuthController {
 
   @Get('kakao/callback')
   @UseGuards(KakaoAuthGuard)
-  async kakaoCallBack(@Req() req, @Res() res: Response) {
-    const user = req?.user;
+  async kakaoCallBack(
+    @Req() req: Request & { socialError?: Error; user?: User },
+    @Res() res: Response,
+  ) {
+    const { user, socialError } = req;
+    if (socialError) res.send(socialError);
     const tokens = await this.authService.login(user, true);
     return res.send(tokens);
   }

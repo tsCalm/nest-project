@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-kakao-oauth2';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
@@ -11,6 +11,7 @@ import { IUserCreateRepository } from 'src/modules/user/types/repository/user-cr
 import { IUserFindRepository } from 'src/modules/user/types/repository/user-find.interface';
 import { Request, RequestHandler } from 'express';
 import { IKakaoProfile } from '../types/dto';
+import { User } from 'src/modules/user/user.entity';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
@@ -30,7 +31,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   }
 
   async validate(
-    req: Request,
+    req: Request & { socialError?: Error; user?: User },
     accessToken: string,
     refreshToken: string,
     profile: IKakaoProfile,
@@ -68,8 +69,11 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
       });
       return await this._userCreateRepository.save(newUserParam);
     }
-    if (user.login_type !== LOGIN_TYPE.KAKAO)
-      res.send(`${user.login_type} 로그인으로 다시 시도해주세요.`);
+    if (user.login_type !== LOGIN_TYPE.KAKAO) {
+      req.socialError = new BadRequestException(
+        `${user.login_type} 로그인으로 다시 시도해주세요.`,
+      );
+    }
     return user;
   }
 }

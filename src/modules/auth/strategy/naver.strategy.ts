@@ -1,5 +1,5 @@
 import { Profile, Strategy } from 'passport-naver-v2';
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { LOGIN_TYPE } from 'src/modules/user/enum';
@@ -10,6 +10,7 @@ import {
 import { IUserCreateRepository } from 'src/modules/user/types/repository/user-create.interface';
 import { IUserFindRepository } from 'src/modules/user/types/repository/user-find.interface';
 import { Request } from 'express';
+import { User } from 'src/modules/user/user.entity';
 
 @Injectable()
 export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
@@ -29,7 +30,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
   }
 
   async validate(
-    req: Request,
+    req: Request & { socialError?: Error; user?: User },
     accessToken: string,
     refreshToken: string,
     profile: Profile,
@@ -62,8 +63,11 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
       });
       return await this._userCreateRepository.save(newUserParam);
     }
-    if (user.login_type !== LOGIN_TYPE.NAVER)
-      res.send(`${user.login_type} 로그인으로 다시 시도해주세요.`);
+    if (user.login_type !== LOGIN_TYPE.NAVER) {
+      req.socialError = new BadRequestException(
+        `${user.login_type} 로그인으로 다시 시도해주세요.`,
+      );
+    }
     return user;
   }
 }

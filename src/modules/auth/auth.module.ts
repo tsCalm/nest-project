@@ -27,6 +27,7 @@ import { LocalStrategy } from './strategy/local.strategy';
 import { AccessTokenStrategy } from './strategy/access-token.strategy';
 import { RefreshTokenStrategy } from './strategy/refresh-token.strategy';
 import { NaverStrategy } from './strategy/naver.strategy';
+import { KakaoStrategy } from './strategy/kakao.strategy';
 
 @Module({
   imports: [JwtModule.register({}), TypeOrmModule.forFeature([User, JwtToken])],
@@ -37,6 +38,7 @@ import { NaverStrategy } from './strategy/naver.strategy';
     RefreshTokenStrategy,
     LocalStrategy,
     NaverStrategy,
+    KakaoStrategy,
     {
       provide: HASH_PASSWORD_SERVICE_TOKEN,
       useClass: HashService,

@@ -18,8 +18,9 @@ import { RefreshTokenGuard } from './guard/refresh-token.guard';
 import { GENERATE_JWT_TYPE } from './enum';
 import { get } from 'http';
 import { NaverStrategy } from './strategy/naver.strategy';
-import { NaverAuthGuard } from './guard/naver-guard';
+import { NaverAuthGuard } from './guard/naver.guard';
 import { Request, Response } from 'express';
+import { KakaoAuthGuard } from './guard/kakao.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -59,6 +60,18 @@ export class AuthController {
   @Get('naver/callback')
   @UseGuards(NaverAuthGuard)
   async naverCallBack(@Req() req, @Res() res: Response) {
+    const user = req?.user;
+    const tokens = await this.authService.login(user, true);
+    return res.send(tokens);
+  }
+
+  @Get('kakao')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoLogin() {}
+
+  @Get('kakao/callback')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoCallBack(@Req() req, @Res() res: Response) {
     const user = req?.user;
     const tokens = await this.authService.login(user, true);
     return res.send(tokens);

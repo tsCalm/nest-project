@@ -1,3 +1,4 @@
-/node_modules
-/dist
+node_modules
+/user/src/app/node_modules
+dist
 .env.*

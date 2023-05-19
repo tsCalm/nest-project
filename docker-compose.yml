@@ -5,13 +5,15 @@ services:
       dockerfile: Dockerfile
       context: .
     container_name: api-server
+    restart: always
     depends_on:
       - mysql
     env_file:
       - .env.stag
     volumes:
-      - .:/usr/src/app
+      - ./:/usr/src/app
       - /usr/src/app/node_modules
+    command: npm run start:dev
     networks:
       - limsm-net
     ports:

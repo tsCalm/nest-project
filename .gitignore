@@ -37,3 +37,9 @@ lerna-debug.log*
 # env
 .env.stag
 .env.prod
+
+# package directories
+jspm_packages
+
+# Serverless directories
+.serverless

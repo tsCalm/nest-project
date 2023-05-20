@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { S3ManagerService } from '../common/aws/s3/s3-manager.service';
 import { UserCreateRepository } from './repository/user-create';
 import { UserExistRepository } from './repository/user-exist';
 import { UserFindRepository } from './repository/user-find';
@@ -16,6 +17,7 @@ import { User } from './user.entity';
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [
+    S3ManagerService,
     {
       provide: USER_EXIST_REPOSITORY_TOKEN,
       useClass: UserExistRepository,

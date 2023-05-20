@@ -6,6 +6,6 @@ export class UserController {
   constructor(private readonly s3ManagerService: S3ManagerService) {}
   @Get()
   testFunction() {
-    return this.s3ManagerService.listBucketContents('test');
+    return this.s3ManagerService.getPreSignedUrl('test');
   }
 }

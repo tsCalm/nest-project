@@ -7,6 +7,8 @@ export default {
     credentials: new SharedIniFileCredentials({
       profile: 'default',
     }),
+    signatureVersion: 'v4',
+    region: 'ap-northeast-2',
   },
   services: [S3],
 };

@@ -19,6 +19,9 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', comment: '주소', nullable: true })
   address: string;
 
+  @Column({ type: 'varchar', comment: '프로필 이미지 path', nullable: true })
+  profile_img: string;
+
   @Column({ type: 'enum', enum: LOGIN_TYPE, default: LOGIN_TYPE.LOCAL })
   login_type: string;
 
